@@ -11,10 +11,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-# os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+
+# Create a checkbox to select the model
+model_option = st.checkbox("Select Model: GPT 3.5 Turbo")
+if model_option:
+    model = "gpt-3.5-turbo"
+else:
+    model = "gpt-4"
 
 # Initialize chat model
-chat_llm = ChatOpenAI(temperature=0.0)
+chat_llm = ChatOpenAI(model_name=model, temperature=0.0)
 
 def generator(question, answer):
     title_template = """
@@ -27,7 +33,7 @@ def generator(question, answer):
     return str(response.content)
 
 def main():
-    st.title("👨‍💻 QnA with explaination")
+    st.title("👨‍💻 QnA with explanation")
 
     # File Upload
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -44,18 +50,18 @@ def main():
             answer = row["Answer"]
             explanation = generator(question, answer)
             df.at[index, "Explanation"] = explanation
-            # print("done")
 
         # Display the result DataFrame
         st.write("Result:")
-        df.to_csv("results.csv")
+        result_filename = f"{model.lower().replace(' ', '')}_result.df"
+        df.to_csv(result_filename)
         st.write(df)
 
         # Create a download link for the result CSV
         csv_file = df.to_csv(index=False)
         b64 = base64.b64encode(csv_file.encode()).decode()
         st.markdown(f'### Download Result CSV ###')
-        href = f'<a href="data:file/csv;base64,{b64}" download="result.csv">Click here to download the result CSV file</a>'
+        href = f'<a href="data:file/csv;base64,{b64}" download="{result_filename}">Click here to download the result CSV file</a>'
         st.markdown(href, unsafe_allow_html=True)
 
 if __name__ == "__main__":
