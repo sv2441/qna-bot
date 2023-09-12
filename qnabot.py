@@ -27,7 +27,7 @@ def generator(question, answer):
     return str(response.content)
 
 def main():
-    st.title("👨‍💻 Code Generation")
+    st.title("👨‍💻 QnA with explaination")
 
     # File Upload
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
