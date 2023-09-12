@@ -53,7 +53,7 @@ def main():
 
         # Display the result DataFrame
         st.write("Result:")
-        result_filename = f"{model.lower().replace(' ', '')}_result.df"
+        result_filename = f"{model.lower().replace(' ', '')}_result"
         df.to_csv(result_filename)
         st.write(df)
 
